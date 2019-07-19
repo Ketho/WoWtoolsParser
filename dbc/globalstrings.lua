@@ -1,3 +1,4 @@
+-- handler for ParseJSON
 local globalstrings = {}
 local shortcut = '%s = "%s";'
 local full = '_G["%s"] = "%s";'

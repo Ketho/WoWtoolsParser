@@ -1,7 +1,8 @@
+-- handler for ParseJSON
 local function read(tbl)
-	for k, v in pairs(tbl) do
-		local id, name, desc = v[4], v[1], v[3]
-		print(k, id, name, desc)
+	for idx, line in pairs(tbl) do
+		local id, name, desc = line[4], line[1], line[3]
+		print(idx, id, name, desc)
 	end
 end
 
