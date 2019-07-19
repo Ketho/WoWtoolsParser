@@ -81,7 +81,7 @@ function ParseCSV(name)
 	local file = io.open(path, "r")
 	if not file then
 		file = io.open(path, "w")
-		HTTP_GET(csv_url:format(name, build), file) 
+		HTTP_GET(csv_url:format(name, build), file)
 		file:close()
 	end
 	-- read from file
@@ -104,13 +104,13 @@ function ParseListfile(refresh)
 	local file = io.open(path, "r")
 	if refresh or not file then
 		file = io.open(path, "w")
-		HTTP_GET(listfile_url, file) 
+		HTTP_GET(listfile_url, file)
 		file:close()
 	end
 	-- read listfile
-	local file = csv.open(path, {separator = ";"})
-	for line in file:lines() do
-		local fdid, path = line[1], line[2]
-		print(fdid, path)
+	local f = csv.open(path, {separator = ";"})
+	for line in f:lines() do
+		local fdid, filePath = line[1], line[2]
+		print(fdid, filePath)
 	end
 end
