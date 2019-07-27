@@ -28,7 +28,7 @@ end
 
 --- Finds the most recent wow.tools build from an HTML document.
 -- @param html the HTML document
--- @return build number (e.g. "8.2.0.30993")
+-- @return build the build number (e.g. "8.2.0.30993")
 local function GetLatestBuild(html)
 	local document = gumbo.parse(html)
 	local element = document:getElementById("buildFilter")
@@ -38,11 +38,13 @@ end
 
 --- Parses the DBC from JSON.
 -- Calls the respective dbc\<name>.lua handler if applicable, otherwise prints the whole DBC
--- @param name of the DBC
-function ParseJSON(name)
-	-- get build
-	local html = HTTP_GET(html_url:format(name))
-	local build = GetLatestBuild(html)
+-- @param name the DBC name
+-- @param build (optional) the build version
+function ParseJSON(name, build)
+	if not build then
+		local html = HTTP_GET(html_url:format(name))
+		build = GetLatestBuild(html)
+	end
 	-- cache json
 	local path = string.format("dbc/cache/%s_%s.json", name, build)
 	local file = io.open(path, "r")
@@ -70,12 +72,14 @@ end
 
 --- Parses the DBC (with header) from CSV.
 -- Calls the respective dbc\<name>.lua handler if applicable, otherwise prints the whole DBC
--- If a handler exists, each set of fields will be keyed by the names in the header
--- @param name of the DBC
-function ParseCSV(name)
-	-- get build
-	local html = HTTP_GET(html_url:format(name))
-	local build = GetLatestBuild(html)
+-- @param name the DBC name
+-- @param useHeader (optional) if true and a handler exists, each set of fields will be keyed by the names in the header
+-- @param build (optional) the build version
+function ParseCSV(name, useHeader, build)
+	if not build then
+		local html = HTTP_GET(html_url:format(name))
+		build = GetLatestBuild(html)
+	end
 	-- cache csv
 	local path = string.format("dbc/cache/%s_%s.csv", name, build)
 	local file = io.open(path, "r")
@@ -86,7 +90,7 @@ function ParseCSV(name)
 	end
 	-- read from file
 	local exists, handler = pcall(require, "dbc/"..name)
-	local f = csv.open(path, exists and {header = true})
+	local f = csv.open(path, exists and useHeader and {header = true})
 	if exists then
 		handler(f)
 	else
@@ -97,7 +101,7 @@ function ParseCSV(name)
 end
 
 --- Parses the CSV listfile.
--- @refresh if the listfile should be redownloaded
+-- @param refresh (optional) if the listfile should be redownloaded
 function ParseListfile(refresh)
 	-- cache listfile
 	local path = "dbc/cache/listfile.csv"
