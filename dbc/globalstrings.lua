@@ -1,4 +1,4 @@
--- handler for ParseJSON
+-- handler for ParseCSV
 local globalstrings = {}
 local shortcut = '%s = "%s";'
 local full = '_G["%s"] = "%s";'
@@ -18,9 +18,9 @@ local slashKeys = {
 	COMBATLOGENABLED = "Combat being logged to Logs\\\\WoWCombatLog.txt",
 }
 
-local function read(tbl)
+local function read(csv)
 	-- filter and sort globalstrings
-	for _, v in pairs(tbl) do
+	for v in csv:lines() do
 		local flags = tonumber(v[4])
 		-- strings with flags 0 and 2 are not available in-game
 		if flags == 1 or flags == 3 then
@@ -35,8 +35,7 @@ local function read(tbl)
 	local file = io.open("out/globalstrings.lua", "w")
 	for _, v in pairs(globalstrings) do
 		local key, value = v[1], v[2]
-		-- space char
-		value = value:gsub('\\32', ' ')
+		value = value:gsub('\\32', ' ') -- space char
 		-- unescape any quotes before escaping quotes
 		value = value:gsub('\\\"', '"')
 		value = value:gsub('"', '\\\"')
