@@ -57,7 +57,7 @@ local InventoryTypeToSlot = {
 	--[28] = IndexRelicType, -- IndexRelicType
 }
 
-local function SortByValue(t)
+local function SortByKey(t)
 	local sorted = {}
 	for v in pairs(t) do
 		table.insert(sorted, v)
@@ -72,7 +72,7 @@ local function GetClassicItemSets(BUILD)
 	local set_names, set_itemIDs = ParseCSV("itemset", true, BUILD)
 	print("IMorphSets = {")
 
-	for _, setID in pairs(SortByValue(set_names)) do
+	for _, setID in pairs(SortByKey(set_names)) do
 		print(string.format("\t[%d] = {", setID))
 		print(string.format('\t\tname = "%s",', set_names[setID]))
 		local sortedSet = {}
