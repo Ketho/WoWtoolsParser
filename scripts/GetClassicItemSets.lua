@@ -84,8 +84,9 @@ local function GetClassicItemSets(BUILD)
 			return a[3] < b[3]
 		end)
 		for _, v in pairs(sortedSet) do
-			-- neck, finger, trinket cant be morphed
-			print(string.format("\t\t[%d] = %d, -- %d", v[3], v[1], v[2]))
+			if v[3] > 0 then -- neck, finger, trinket cant be morphed
+				print(string.format("\t\t[%d] = %d, -- %d", v[3], v[1], v[2]))
+			end
 		end
 		print("\t},")
 	end
