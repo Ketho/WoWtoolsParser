@@ -92,7 +92,7 @@ function ParseCSV(name, useHeader, build)
 	local exists, handler = pcall(require, "dbc/"..name)
 	local f = csv.open(path, exists and useHeader and {header = true})
 	if exists then
-		handler(f)
+		return handler(f)
 	else
 		for line in f:lines() do
 			print(table.unpack(line))
