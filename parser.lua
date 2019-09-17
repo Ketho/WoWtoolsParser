@@ -62,7 +62,7 @@ function ParseJSON(name, build)
 	local tbl = cjson.decode(json).data
 	local exists, handler = pcall(require, "dbc/"..name)
 	if exists then
-		handler(tbl)
+		return handler(tbl)
 	else
 		for i, v in pairs(tbl) do
 			print(i, table.unpack(v))
