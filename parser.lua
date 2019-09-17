@@ -12,7 +12,7 @@ local listfile_url = "https://wow.tools/casc/listfile/download/csv/unverified"
 --- Sends an HTTP GET request.
 -- @param url the URL of the request
 -- @param file (optional) file to be written
--- @return if file is given, string of the response
+-- @return string if file is given, the HTTP response
 local function HTTP_GET(url, file)
 	local data, idx = {}, 0
 	cURL.easy{
@@ -40,6 +40,7 @@ end
 -- Calls the respective dbc\<name>.lua handler if applicable, otherwise prints the whole DBC
 -- @param name the DBC name
 -- @param build (optional) the build version
+-- @return ... the return parameters of the handler
 function ParseJSON(name, build)
 	if not build then
 		local html = HTTP_GET(html_url:format(name))
@@ -75,6 +76,7 @@ end
 -- @param name the DBC name
 -- @param useHeader (optional) if true and a handler exists, each set of fields will be keyed by the names in the header
 -- @param build (optional) the build version
+-- @return ... the return parameters of the handler
 function ParseCSV(name, useHeader, build)
 	if not build then
 		local html = HTTP_GET(html_url:format(name))
