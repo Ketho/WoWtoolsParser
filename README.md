@@ -3,7 +3,7 @@ Lua parser for CSV or JSON files from [wow.tools](https://wow.tools/)
 
 * CSV/JSON Files will be downloaded and then cached in `dbc/cache/`
 * If a handler exists in `dbc/` it will be used, otherwise just prints the file's contents.
-* Output files will generally written to `out/` by the handler.
+* Output files will generally be written to `dbc/out/` by the handler.
 
 Example usage can be found in `main.lua` and `scripts/`
 

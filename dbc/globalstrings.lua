@@ -32,7 +32,7 @@ local function read(csv)
 		return a[1] < b[1]
 	end)
 
-	local file = io.open("out/globalstrings.lua", "w")
+	local file = io.open("dbc/out/globalstrings.lua", "w")
 	for _, v in pairs(globalstrings) do
 		local key, value = v[1], v[2]
 		value = value:gsub('\\32', ' ') -- space char
