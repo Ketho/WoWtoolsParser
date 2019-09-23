@@ -1,4 +1,4 @@
-require "parser"
+local parser = require "parser"
 
 -- https://github.com/Gethe/wow-ui-source/blob/classic/FrameXML/Constants.lua#L311
 local INVSLOT_AMMO = 0
@@ -68,8 +68,8 @@ end
 
 -- make icesythe happy
 local function GetClassicItemSets(BUILD)
-	local item_inventoryType = ParseCSV("item", true, BUILD)
-	local set_names, set_itemIDs = ParseCSV("itemset", true, BUILD)
+	local item_inventoryType = parser.ReadCSV("item", true, BUILD)
+	local set_names, set_itemIDs = parser.ReadCSV("itemset", true, BUILD)
 	print("IMorphSets = {")
 
 	for _, setID in pairs(SortByKey(set_names)) do

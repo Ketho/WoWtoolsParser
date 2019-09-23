@@ -4,6 +4,7 @@ local cjsonutil = require "cjson.util"
 local csv = require "csv"
 local gumbo = require "gumbo"
 
+local Parser = {}
 local html_url = "https://wow.tools/dbc/?dbc=%s"
 local json_url = "https://wow.tools/api/data/%s/?build=%s&length=%d"
 local csv_url = "https://wow.tools/api/export/?name=%s&build=%s"
@@ -41,7 +42,7 @@ end
 -- @param name the DBC name
 -- @param build (optional) the build version
 -- @return ... the return parameters of the handler
-function ParseJSON(name, build)
+function Parser.ReadJSON(name, build)
 	if not build then
 		local html = HTTP_GET(html_url:format(name))
 		build = GetLatestBuild(html)
@@ -77,7 +78,7 @@ end
 -- @param useHeader (optional) if true and a handler exists, each set of fields will be keyed by the names in the header
 -- @param build (optional) the build version
 -- @return ... the return parameters of the handler
-function ParseCSV(name, useHeader, build)
+function Parser.ReadCSV(name, useHeader, build)
 	if not build then
 		local html = HTTP_GET(html_url:format(name))
 		build = GetLatestBuild(html)
@@ -104,7 +105,7 @@ end
 
 --- Parses the CSV listfile.
 -- @param refresh (optional) if the listfile should be redownloaded
-function ParseListfile(refresh)
+function Parser.ReadListfile(refresh)
 	-- cache listfile
 	local path = "dbc/cache/listfile.csv"
 	local file = io.open(path, "r")
@@ -120,3 +121,5 @@ function ParseListfile(refresh)
 		print(fdid, filePath)
 	end
 end
+
+return Parser
