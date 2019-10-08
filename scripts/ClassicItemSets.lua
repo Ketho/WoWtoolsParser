@@ -67,7 +67,7 @@ local function SortByKey(t)
 end
 
 -- make icesythe happy
-local function GetClassicItemSets(BUILD)
+local function ClassicItemSets(BUILD)
 	local item_inventoryType = parser.ReadCSV("item", true, BUILD)
 	local set_names, set_itemIDs = parser.ReadCSV("itemset", true, BUILD)
 	print("IMorphSets = {")
@@ -94,4 +94,4 @@ local function GetClassicItemSets(BUILD)
 end
 
 -- https://gist.github.com/Ketho/2eb100d509e68bf3f49ffa10b3b7d9f4
-GetClassicItemSets("1.13.2.31830")
+ClassicItemSets("1.13.2.31830")
