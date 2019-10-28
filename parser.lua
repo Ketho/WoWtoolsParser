@@ -3,8 +3,8 @@ local cjson = require "cjson"
 local cjsonutil = require "cjson.util"
 local csv = require "csv"
 local gumbo = require "gumbo"
+local parser = {}
 
-local Parser = {}
 local html_url = "https://wow.tools/dbc/?dbc=%s"
 local json_url = "https://wow.tools/api/data/%s/?build=%s&length=%d"
 local csv_url = "https://wow.tools/api/export/?name=%s&build=%s"
@@ -27,26 +27,41 @@ local function HTTP_GET(url, file)
 	return table.concat(data)
 end
 
---- Finds the most recent wow.tools build from an HTML document.
+--- Finds a wow.tools build from an HTML document.
+-- @param name the DBC name
 -- @param html the HTML document
 -- @return build the build number (e.g. "8.2.0.30993")
-local function GetLatestBuild(html)
-	local document = gumbo.parse(html)
-	local element = document:getElementById("buildFilter")
-	local build = element.childNodes[2]:getAttribute("value")
+local function FindBuild(name, build)
+	if not build or #build <= 6 then
+		local html = HTTP_GET(html_url:format(name))
+		local document = gumbo.parse(html)
+		local element = document:getElementById("buildFilter")
+		if not build then
+			local firstBuild = element.childNodes[2]:getAttribute("value")
+			return firstBuild
+		else
+			-- if target is just "7.3.5" or "1.13.2", check for major version
+			local majorversion = "^"..build:gsub("%.", "%%.") -- escape dots
+			for i = 2, #element.childNodes, 2 do
+				local value = element.childNodes[i]:getAttribute("value")
+				if value:find(majorversion) then
+					return value
+				end
+			end
+		end
+	end
 	return build
 end
 
 --- Parses the DBC from JSON.
--- Calls the respective dbc\<name>.lua handler if applicable, otherwise prints the whole DBC
+-- Calls the respective dbc\<name>.lua handler if applicable, otherwise returns the converted json table
 -- @param name the DBC name
--- @param build (optional) the build version
--- @return ... the return parameters of the handler
-function Parser.ReadJSON(name, build)
-	if not build then
-		local html = HTTP_GET(html_url:format(name))
-		build = GetLatestBuild(html)
-	end
+-- @param options.build (optional) the build version, otherwise falls back to the most recent build
+-- @return ... if a handler exists, the return parameters of the handler, otherwise the table
+function parser.ReadJSON(name, options)
+	options = options or {}
+	local build = options.build
+	build = FindBuild(name, build)
 	-- cache json
 	local path = string.format("dbc/cache/%s_%s.json", name, build)
 	local file = io.open(path, "r")
@@ -63,26 +78,19 @@ function Parser.ReadJSON(name, build)
 	local json = cjsonutil.file_load(path)
 	local tbl = cjson.decode(json).data
 	local exists, handler = pcall(require, "dbc/"..name)
-	if exists then
-		return handler(tbl)
-	else
-		for i, v in pairs(tbl) do
-			print(i, table.unpack(v))
-		end
-	end
+	return exists and handler(tbl) or tbl
 end
 
 --- Parses the DBC (with header) from CSV.
--- Calls the respective dbc\<name>.lua handler if applicable, otherwise prints the whole DBC
+-- Calls the respective dbc\<name>.lua handler if applicable, otherwise returns the csv iterator
 -- @param name the DBC name
--- @param useHeader (optional) if true and a handler exists, each set of fields will be keyed by the names in the header
--- @param build (optional) the build version
--- @return ... the return parameters of the handler
-function Parser.ReadCSV(name, useHeader, build)
-	if not build then
-		local html = HTTP_GET(html_url:format(name))
-		build = GetLatestBuild(html)
-	end
+-- @param options.build (optional) the build version, otherwise falls back to the most recent build
+-- @param options.header (optional) if true, each set of fields will be keyed by header name, otherwise by column index
+-- @return ... if a handler exists, the return parameters of the handler, otherwise the csv iterator
+function parser.ReadCSV(name, options)
+	options = options or {}
+	local build, header = options.build, options.header
+	build = FindBuild(name, build)
 	-- cache csv
 	local path = string.format("dbc/cache/%s_%s.csv", name, build)
 	local file = io.open(path, "r")
@@ -93,33 +101,54 @@ function Parser.ReadCSV(name, useHeader, build)
 	end
 	-- read from file
 	local exists, handler = pcall(require, "dbc/"..name)
-	local f = csv.open(path, exists and useHeader and {header = true})
+	local dbc = csv.open(path, header and {header = true})
 	if exists then
-		return handler(f)
+		return handler(dbc) -- support multiple returns
 	else
-		for line in f:lines() do
-			print(table.unpack(line))
-		end
+		return dbc
 	end
 end
 
 --- Parses the CSV listfile.
 -- @param refresh (optional) if the listfile should be redownloaded
-function Parser.ReadListfile(refresh)
+function parser.ReadListfile(refresh)
 	-- cache listfile
 	local path = "dbc/cache/listfile.csv"
 	local file = io.open(path, "r")
 	if refresh or not file then
+		print("downloading listfile...")
 		file = io.open(path, "w")
 		HTTP_GET(listfile_url, file)
 		file:close()
 	end
 	-- read listfile
 	local f = csv.open(path, {separator = ";"})
+	local filedata = {}
+	print("reading listfile...")
 	for line in f:lines() do
-		local fdid, filePath = line[1], line[2]
-		print(fdid, filePath)
+		local fdid, filePath = tonumber(line[1]), line[2]
+		filedata[fdid] = filePath
+	end
+	print("finished reading.")
+	return filedata
+end
+
+function parser.ExplodeCSV(csv)
+	for line in csv:lines() do
+		print(table.unpack(line))
 	end
 end
 
-return Parser
+function parser.ExplodeJSON(tbl)
+	for id, line in pairs(tbl) do
+		print(id, table.unpack(line))
+	end
+end
+
+function parser.ExplodeListfile(tbl)
+	for fdid, path in pairs(tbl) do
+		print(fdid, path)
+	end
+end
+
+return parser

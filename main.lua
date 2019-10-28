@@ -1,14 +1,13 @@
 local parser = require "parser"
 
-parser.ReadCSV("globalstrings")
---parser.ReadCSV("globalstrings", false, "1.13.2.31650")
---[[
-parser.ReadJSON("azeriteessence") -- no handler
-parser.ReadJSON("mount") -- mount has json handler
-parser.ReadJSON("map", "7.3.5.26972") -- targeted build number
-parser.ReadCSV("battlepetspecies") -- no handler
-parser.ReadCSV("toy", true) -- toy has csv handler and keyed by header
-parser.ReadCSV("uimap", false, "1.13.2.31209") -- not keyed by header, targeted build number
---parser.ReadListfile() -- this takes very long when printing
-]]
-print("finished")
+parser.ExplodeCSV(parser.ReadCSV("uimap")) -- most recent retail build
+parser.ExplodeCSV(parser.ReadCSV("chrraces", {build="1.13.2"})) -- most recent classic build
+
+parser.ExplodeJSON(parser.ReadJSON("azeriteessence"))
+parser.ExplodeJSON(parser.ReadJSON("map", {build="7.3.5.26972"})) -- specific build
+
+-- has file handlers in dbc/
+parser.ReadCSV("toy", {header=true}) -- dbc/toy.lua, keyed by header name
+parser.ReadJSON("mount") -- dbc/mount.lua
+
+--ExplodeListfile(parser.ReadListfile()) -- this takes very long when printing
