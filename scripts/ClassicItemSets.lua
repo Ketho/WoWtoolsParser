@@ -1,4 +1,4 @@
-local parser = require "parser"
+local parser = require "wowtoolsparser"
 
 -- https://github.com/Gethe/wow-ui-source/blob/classic/FrameXML/Constants.lua#L311
 local INVSLOT_AMMO = 0
@@ -66,11 +66,9 @@ local function SortTableKey(tbl)
 	return sorted
 end
 
--- make icesythe happy
 local function ClassicItemSets(BUILD)
 	local item_inventoryType = parser.ReadCSV("item", {build=BUILD, header=true})
 	local set_names, set_itemIDs = parser.ReadCSV("itemset", {build=BUILD, header=true})
-	print(set_names, set_itemIDs)
 	print("IMorphSets = {")
 
 	for _, setID in pairs(SortTableKey(set_names)) do

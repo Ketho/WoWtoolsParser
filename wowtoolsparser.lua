@@ -10,6 +10,10 @@ local json_url = "https://wow.tools/api/data/%s/?build=%s&length=%d"
 local csv_url = "https://wow.tools/api/export/?name=%s&build=%s"
 local listfile_url = "https://wow.tools/casc/listfile/download/csv/unverified"
 
+local csv_cache = "dbc/cache/%s_%s.csv"
+local json_cache = "dbc/cache/%s_%s.json"
+local listfile_cache = "dbc/cache/listfile.csv"
+
 --- Sends an HTTP GET request.
 -- @param url the URL of the request
 -- @param file (optional) file to be written
@@ -53,6 +57,34 @@ local function FindBuild(name, build)
 	return build
 end
 
+--- Parses the DBC (with header) from CSV.
+-- Calls the respective dbc\<name>.lua handler if applicable, otherwise returns the csv iterator
+-- @param name the DBC name
+-- @param options.build (optional) the build version, otherwise falls back to the most recent build
+-- @param options.header (optional) if true, each set of fields will be keyed by header name, otherwise by column index
+-- @return ... if a handler exists, the return parameters of the handler, otherwise the csv iterator
+function parser.ReadCSV(name, options)
+	options = options or {}
+	local build, header = options.build, options.header
+	build = FindBuild(name, build)
+	-- cache csv
+	local path = string.format(csv_cache, name, build)
+	local file = io.open(path, "r")
+	if not file then
+		file = io.open(path, "w")
+		HTTP_GET(csv_url:format(name, build), file)
+		file:close()
+	end
+	-- read from file
+	local exists, handler = pcall(require, "dbc/"..name)
+	local dbc = csv.open(path, header and {header = true})
+	if exists then
+		return handler(dbc) -- support multiple returns
+	else
+		return dbc
+	end
+end
+
 --- Parses the DBC from JSON.
 -- Calls the respective dbc\<name>.lua handler if applicable, otherwise returns the converted json table
 -- @param name the DBC name
@@ -63,7 +95,7 @@ function parser.ReadJSON(name, options)
 	local build = options.build
 	build = FindBuild(name, build)
 	-- cache json
-	local path = string.format("dbc/cache/%s_%s.json", name, build)
+	local path = string.format(json_cache, name, build)
 	local file = io.open(path, "r")
 	if not file then
 		file = io.open(path, "w")
@@ -81,48 +113,19 @@ function parser.ReadJSON(name, options)
 	return exists and handler(tbl) or tbl
 end
 
---- Parses the DBC (with header) from CSV.
--- Calls the respective dbc\<name>.lua handler if applicable, otherwise returns the csv iterator
--- @param name the DBC name
--- @param options.build (optional) the build version, otherwise falls back to the most recent build
--- @param options.header (optional) if true, each set of fields will be keyed by header name, otherwise by column index
--- @return ... if a handler exists, the return parameters of the handler, otherwise the csv iterator
-function parser.ReadCSV(name, options)
-	options = options or {}
-	local build, header = options.build, options.header
-	build = FindBuild(name, build)
-	-- cache csv
-	local path = string.format("dbc/cache/%s_%s.csv", name, build)
-	local file = io.open(path, "r")
-	if not file then
-		file = io.open(path, "w")
-		HTTP_GET(csv_url:format(name, build), file)
-		file:close()
-	end
-	-- read from file
-	local exists, handler = pcall(require, "dbc/"..name)
-	local dbc = csv.open(path, header and {header = true})
-	if exists then
-		return handler(dbc) -- support multiple returns
-	else
-		return dbc
-	end
-end
-
 --- Parses the CSV listfile.
 -- @param refresh (optional) if the listfile should be redownloaded
 function parser.ReadListfile(refresh)
 	-- cache listfile
-	local path = "dbc/cache/listfile.csv"
-	local file = io.open(path, "r")
+	local file = io.open(listfile_cache, "r")
 	if refresh or not file then
 		print("downloading listfile...")
-		file = io.open(path, "w")
+		file = io.open(listfile_cache, "w")
 		HTTP_GET(listfile_url, file)
 		file:close()
 	end
 	-- read listfile
-	local f = csv.open(path, {separator = ";"})
+	local f = csv.open(listfile_cache, {separator = ";"})
 	local filedata = {}
 	print("reading listfile...")
 	for line in f:lines() do
@@ -133,8 +136,8 @@ function parser.ReadListfile(refresh)
 	return filedata
 end
 
-function parser.ExplodeCSV(csv)
-	for line in csv:lines() do
+function parser.ExplodeCSV(iter)
+	for line in iter:lines() do
 		print(table.unpack(line))
 	end
 end

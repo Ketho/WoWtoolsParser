@@ -7,7 +7,7 @@ Lua parser for CSV or JSON files from [wow.tools](https://wow.tools/) by [Marlam
 ### Examples
 Prints [UiMap.db2](https://wow.tools/dbc/?dbc=uimap)
 ```lua
-local parser = require "parser"
+local parser = require "wowtoolsparser"
 local csv = parser.ReadCSV("uimap")
 for line in csv:lines() do
 	print(table.unpack(line))
@@ -15,15 +15,15 @@ end
 ```
 Prints the most recent classic [ChrRaces.db2](https://wow.tools/dbc/?dbc=chrraces&build=1.13.2.32089) build
 ```lua
-local parser = require "parser"
+local parser = require "wowtoolsparser"
 parser.ExplodeCSV(parser.ReadCSV("chrraces", {build="1.13.2"}))
 ```
-Prints a specific [GlobalStrings.db2](https://wow.tools/dbc/?dbc=globalstrings&build=7.3.5.26972) build
+Prints a specific [GlobalStrings.db2](https://wow.tools/dbc/?dbc=globalstrings&build=7.3.5.26972) build and accesses table keys by header name
 ```lua
-local parser = require "parser"
+local parser = require "wowtoolsparser"
 local options = {
 	build = "7.3.5.26972",
-	header = true, -- index keys by header name
+	header = true, -- index keys by header
 }
 
 local globalstrings = parser.ReadCSV("globalstrings", options)

@@ -1,4 +1,4 @@
-local parser = require "parser"
+local parser = require "wowtoolsparser"
 local output = "dbc/out/AtlasInfo.lua"
 
 local function SortTable(tbl, key)
@@ -50,14 +50,13 @@ local function AtlasInfo(BUILD)
 				right = right / size.width,
 				top = top / size.height,
 				bottom = bottom / size.height,
-				tileshoriz = line.CommittedFlags&0x4 > 0,
+				tileshoriz = line.CommittedFlags&0x4 > 0, -- requires lua 5.3
 				tilesvert = line.CommittedFlags&0x2 > 0,
 			})
 		end
 	end
 
 	local fsAtlas = '\t["%s"] = { -- %d\n'
-	-- I am not used to lua 5.3 showing dot notation for floating point numbers that are whole, e.g. 4/4 == 1.0
 	local fsMember = '\t\t["%s"] = {%d, %d, %s, %s, %s, %s, %s, %s},\n'
 
 	print("writing to "..output)
@@ -78,6 +77,6 @@ local function AtlasInfo(BUILD)
 	print("finished")
 end
 
---AtlasInfo()
+AtlasInfo()
 --AtlasInfo("8.2.5")
-AtlasInfo("1.13.2")
+--AtlasInfo("1.13.2")

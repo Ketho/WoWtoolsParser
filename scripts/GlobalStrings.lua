@@ -1,4 +1,4 @@
-local parser = require "parser"
+local parser = require "wowtoolsparser"
 local output = "dbc/out/GlobalStrings.lua"
 
 local slashStrings = {
@@ -51,6 +51,6 @@ local function GlobalStrings(BUILD)
 	print("finished")
 end
 
---GlobalStrings()
-GlobalStrings("8.2.5")
+GlobalStrings()
+--GlobalStrings("8.2.5")
 --GlobalStrings("1.13.2")
