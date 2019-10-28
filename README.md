@@ -8,8 +8,8 @@ Lua parser for CSV or JSON files from [wow.tools](https://wow.tools/) by [Marlam
 Prints [UiMap.db2](https://wow.tools/dbc/?dbc=uimap)
 ```lua
 local parser = require "wowtoolsparser"
-local csv = parser.ReadCSV("uimap")
-for line in csv:lines() do
+local iter = parser.ReadCSV("uimap")
+for line in iter:lines() do
 	print(table.unpack(line))
 end
 ```
@@ -26,8 +26,8 @@ local options = {
 	header = true, -- index keys by header
 }
 
-local globalstrings = parser.ReadCSV("globalstrings", options)
-for line in globalstrings:lines() do
+local iter = parser.ReadCSV("globalstrings", options)
+for line in iter:lines() do
 	print(line.ID, line.BaseTag, line.TagText_lang)
 end
 ```
