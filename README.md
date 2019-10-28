@@ -4,7 +4,7 @@ Lua parser for CSV or JSON files from [wow.tools](https://wow.tools/) by [Marlam
 * Files are downloaded and cached in `dbc/cache/`
 * If the respective file handler exists in `dbc/` it will be used, see [main.lua](https://github.com/Ketho/WoWtoolsParser/blob/master/main.lua) for example usage
 
-## Examples
+### Examples
 Prints [UiMap.db2](https://wow.tools/dbc/?dbc=uimap)
 ```lua
 local parser = require "parser"
@@ -32,7 +32,7 @@ for line in globalstrings:lines() do
 end
 ```
 
-#### Dependencies
+### Dependencies
 * curl: https://curl.haxx.se/
 * lua-curl: https://luarocks.org/modules/moteus/lua-curl
 * lua-cjson: https://luarocks.org/modules/openresty/lua-cjson
