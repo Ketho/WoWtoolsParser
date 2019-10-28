@@ -1,4 +1,4 @@
-## wow.tools Parser
+## WoW.tools Parser
 Lua parser for CSV or JSON files from [wow.tools](https://wow.tools/) by [Marlamin](https://github.com/Marlamin/wow.tools)
 
 * Files are downloaded and cached in `dbc/cache/`
