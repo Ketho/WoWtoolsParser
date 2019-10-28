@@ -57,10 +57,10 @@ local InventoryTypeToSlot = {
 	--[28] = IndexRelicType, -- IndexRelicType
 }
 
-local function SortByKey(t)
+local function SortTableKey(tbl)
 	local sorted = {}
-	for v in pairs(t) do
-		table.insert(sorted, v)
+	for key in pairs(tbl) do
+		table.insert(sorted, key)
 	end
 	table.sort(sorted)
 	return sorted
@@ -68,24 +68,28 @@ end
 
 -- make icesythe happy
 local function ClassicItemSets(BUILD)
-	local item_inventoryType = parser.ReadCSV("item", true, BUILD)
-	local set_names, set_itemIDs = parser.ReadCSV("itemset", true, BUILD)
+	local item_inventoryType = parser.ReadCSV("item", {build=BUILD, header=true})
+	local set_names, set_itemIDs = parser.ReadCSV("itemset", {build=BUILD, header=true})
+	print(set_names, set_itemIDs)
 	print("IMorphSets = {")
 
-	for _, setID in pairs(SortByKey(set_names)) do
+	for _, setID in pairs(SortTableKey(set_names)) do
 		print(string.format("\t[%d] = {", setID))
 		print(string.format('\t\tname = "%s",', set_names[setID]))
 		local sortedSet = {}
 		for _, itemID in pairs(set_itemIDs[setID]) do
-			table.insert(sortedSet, {itemID, item_inventoryType[itemID],
-				InventoryTypeToSlot[item_inventoryType[itemID]] or 0})
+			table.insert(sortedSet, {
+				itemID = itemID,
+				inventoryType = item_inventoryType[itemID],
+				slot = InventoryTypeToSlot[item_inventoryType[itemID]] or 0,
+			})
 		end
 		table.sort(sortedSet, function(a, b)
-			return a[3] < b[3]
+			return a.slot < b.slot
 		end)
 		for _, v in pairs(sortedSet) do
-			if v[3] > 0 then -- neck, finger, trinket cant be morphed
-				print(string.format("\t\t[%d] = %d, -- %d", v[3], v[1], v[2]))
+			if v.slot > 0 then -- neck, finger, trinket cant be morphed
+				print(string.format("\t\t[%d] = %d, -- %d", v.slot, v.itemID, v.inventoryType))
 			end
 		end
 		print("\t},")
@@ -94,4 +98,4 @@ local function ClassicItemSets(BUILD)
 end
 
 -- https://gist.github.com/Ketho/2eb100d509e68bf3f49ffa10b3b7d9f4
-ClassicItemSets("1.13.2.31830")
+ClassicItemSets("1.13.2")
