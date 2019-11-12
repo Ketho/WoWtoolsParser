@@ -4,7 +4,7 @@ Lua parser for CSV or JSON files from [wow.tools](https://wow.tools/) by [Marlam
 * Files are downloaded and cached in `dbc/cache/`
 * If the respective file handler exists in `dbc/` it will be used, see [main.lua](https://github.com/Ketho/WoWtoolsParser/blob/master/main.lua) for example usage
 
-### Examples
+### Usage
 Prints [UiMap.db2](https://wow.tools/dbc/?dbc=uimap)
 ```lua
 local parser = require "wowtoolsparser"

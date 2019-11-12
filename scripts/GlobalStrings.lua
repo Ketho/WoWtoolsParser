@@ -2,8 +2,8 @@ local parser = require "wowtoolsparser"
 local output = "dbc/out/GlobalStrings.lua"
 
 local slashStrings = {
-	KEY_BACKSLASH = '\\\\',
-	CHATLOGENABLED = 'Chat being logged to Logs\\\\WoWChatLog.txt',
+	KEY_BACKSLASH = "\\\\",
+	CHATLOGENABLED = "Chat being logged to Logs\\\\WoWChatLog.txt",
 	COMBATLOGENABLED = "Combat being logged to Logs\\\\WoWCombatLog.txt",
 }
 

@@ -21,7 +21,6 @@ local function AtlasInfo(BUILD)
 				atlasID = atlasID,
 				fdid = fdid,
 				fileName = filedata[fdid],
-
 			})
 			atlasSize[atlasID] = {
 				width = tonumber(line.AtlasWidth),
