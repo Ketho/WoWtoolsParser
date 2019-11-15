@@ -66,9 +66,44 @@ local function SortTableKey(tbl)
 	return sorted
 end
 
+local handler = {
+	item = function(iter)
+		local item = {}
+		for l in iter:lines() do
+			local ID = tonumber(l.ID)
+			if ID then
+				item[ID] = tonumber(l.InventoryType)
+			end
+		end
+		return item
+	end,
+	itemset = function(iter)
+		local names, itemIDs = {}, {}
+		for l in iter:lines() do
+			local setID = tonumber(l.ID)
+			if setID then
+				names[setID] = l.Name_lang
+				itemIDs[setID] = {}
+				for i = 0, 9 do
+					local itemID = tonumber(l["ItemID["..i.."]"])
+					if itemID > 0 then
+						table.insert(itemIDs[setID], itemID)
+					end
+				end
+			end
+		end
+		return names, itemIDs
+	end,
+}
+
+local function ParseDBC(dbc, BUILD)
+	local iter = parser.ReadCSV(dbc, {build=BUILD, header=true})
+	return handler[dbc](iter)
+end
+
 local function ClassicItemSets(BUILD)
-	local item_inventoryType = parser.ReadCSV("item", {build=BUILD, header=true})
-	local set_names, set_itemIDs = parser.ReadCSV("itemset", {build=BUILD, header=true})
+	local item_inventoryType = ParseDBC("item", BUILD)
+	local set_names, set_itemIDs = ParseDBC("itemset", BUILD)
 	print("IMorphSets = {")
 
 	for _, setID in pairs(SortTableKey(set_names)) do

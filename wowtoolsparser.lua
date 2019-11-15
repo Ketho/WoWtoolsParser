@@ -10,9 +10,9 @@ local json_url = "https://wow.tools/api/data/%s/?build=%s&length=%d"
 local csv_url = "https://wow.tools/api/export/?name=%s&build=%s"
 local listfile_url = "https://wow.tools/casc/listfile/download/csv/unverified"
 
-local csv_cache = "dbc/cache/%s_%s.csv"
-local json_cache = "dbc/cache/%s_%s.json"
-local listfile_cache = "dbc/cache/listfile.csv"
+local csv_cache = "cache/%s_%s.csv"
+local json_cache = "cache/%s_%s.json"
+local listfile_cache = "cache/listfile.csv"
 
 --- Sends an HTTP GET request.
 -- @param url the URL of the request
@@ -58,15 +58,13 @@ local function FindBuild(name, build)
 end
 
 --- Parses the DBC (with header) from CSV.
--- Calls the respective dbc\<name>.lua handler if applicable, otherwise returns the csv iterator
 -- @param name the DBC name
 -- @param options.build (optional) the build version, otherwise falls back to the most recent build
 -- @param options.header (optional) if true, each set of fields will be keyed by header name, otherwise by column index
--- @return ... if a handler exists, the return parameters of the handler, otherwise the csv iterator
+-- @return iter the csv iterator
 function parser.ReadCSV(name, options)
 	options = options or {}
-	local build, header = options.build, options.header
-	build = FindBuild(name, build)
+	local build = FindBuild(name, options.build)
 	-- cache csv
 	local path = string.format(csv_cache, name, build)
 	local file = io.open(path, "r")
@@ -75,21 +73,14 @@ function parser.ReadCSV(name, options)
 		HTTP_GET(csv_url:format(name, build), file)
 		file:close()
 	end
-	-- read from file
-	local exists, handler = pcall(require, "dbc/"..name)
-	local dbc = csv.open(path, header and {header = true})
-	if exists then
-		return handler(dbc) -- support multiple returns
-	else
-		return dbc
-	end
+	local iter = csv.open(path, options.header and {header = true})
+	return iter
 end
 
 --- Parses the DBC from JSON.
--- Calls the respective dbc\<name>.lua handler if applicable, otherwise returns the converted json table
 -- @param name the DBC name
 -- @param options.build (optional) the build version, otherwise falls back to the most recent build
--- @return ... if a handler exists, the return parameters of the handler, otherwise the table
+-- @return tbl the converted json table
 function parser.ReadJSON(name, options)
 	options = options or {}
 	local build = options.build
@@ -106,11 +97,9 @@ function parser.ReadJSON(name, options)
 		HTTP_GET(json_url:format(name, build, recordsTotal), file)
 		file:close()
 	end
-	-- read from file
 	local json = cjsonutil.file_load(path)
 	local tbl = cjson.decode(json).data
-	local exists, handler = pcall(require, "dbc/"..name)
-	return exists and handler(tbl) or tbl
+	return tbl
 end
 
 --- Parses the CSV listfile.
@@ -143,8 +132,8 @@ function parser.ExplodeCSV(iter)
 end
 
 function parser.ExplodeJSON(tbl)
-	for id, line in pairs(tbl) do
-		print(id, table.unpack(line))
+	for _, line in pairs(tbl) do
+		print(table.unpack(line))
 	end
 end
 

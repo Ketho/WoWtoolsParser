@@ -1,5 +1,5 @@
 local parser = require "wowtoolsparser"
-local output = "dbc/out/AtlasInfo.lua"
+local output = "out/AtlasInfo.lua"
 
 local function SortTable(tbl, key)
 	table.sort(tbl, function(a, b)
@@ -9,7 +9,6 @@ end
 
 local function AtlasInfo(BUILD)
 	local filedata = parser.ReadListfile()
-
 	local uitextureatlas = parser.ReadCSV("uitextureatlas", {build=BUILD, header=true})
 	local atlasTable, atlasOrder, atlasSize = {}, {}, {}
 	for line in uitextureatlas:lines() do

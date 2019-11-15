@@ -1,5 +1,8 @@
 local parser = require "wowtoolsparser"
-local output = "dbc/out/GlobalStrings.lua"
+local output = "out/GlobalStrings.lua"
+
+local short = '%s = "%s";'
+local full = '_G["%s"] = "%s";'
 
 local slashStrings = {
 	KEY_BACKSLASH = "\\\\",
@@ -29,9 +32,6 @@ local function GlobalStrings(BUILD)
 		return a.BaseTag < b.BaseTag
 	end)
 
-	local short = '%s = "%s";'
-	local full = '_G["%s"] = "%s";'
-
 	print("writing to "..output)
 	local file = io.open(output, "w")
 	for _, tbl in pairs(stringsTable) do
@@ -43,7 +43,6 @@ local function GlobalStrings(BUILD)
 		-- dont know any good pattern that does not screw with the rest
 		-- escape single backslashes manually
 		value = slashStrings[key] or value
-
 		local fs = IsValidTableKey(key) and short or full
 		file:write(fs:format(key, value), "\n")
 	end
