@@ -113,10 +113,10 @@ function parser.ReadListfile(refresh)
 		file:close()
 	end
 	-- read listfile
-	local f = csv.open(listfile_cache, {separator = ";"})
+	local iter = csv.open(listfile_cache, {separator = ";"})
 	local filedata = {}
 	print("reading listfile...")
-	for line in f:lines() do
+	for line in iter:lines() do
 		local fdid, filePath = tonumber(line[1]), line[2]
 		filedata[fdid] = filePath
 	end
