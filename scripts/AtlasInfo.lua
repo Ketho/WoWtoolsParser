@@ -20,7 +20,7 @@ local function AtlasInfo(BUILD)
 			table.insert(atlasOrder, {
 				atlasID = atlasID,
 				fdid = fdid,
-				fileName = filedata[fdid],
+				fileName = filedata[fdid] or tostring(fdid), -- listfile might not yet be updated
 			})
 			atlasSize[atlasID] = {
 				width = tonumber(line.AtlasWidth),
@@ -63,7 +63,7 @@ local function AtlasInfo(BUILD)
 	file:write("-- atlas = width, height, leftTexCoord, rightTexCoord, topTexCoord, bottomTexCoord, tilesHorizontally, tilesVertically\n")
 	file:write("local AtlasInfo = {\n")
 	for _, atlas in pairs(atlasOrder) do
-		file:write(fsAtlas:format(atlas.fileName:match("(.+)%.blp"), atlas.fdid))
+		file:write(fsAtlas:format(atlas.fileName:match("(.+)%.blp") or atlas.fileName, atlas.fdid))
 		for _, member in pairs(atlasTable[atlas.atlasID]) do
 			file:write(fsMember:format(member.name, member.width, member.height,
 				member.left, member.right, member.top, member.bottom,
