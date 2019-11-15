@@ -83,8 +83,7 @@ end
 -- @return tbl the converted json table
 function parser.ReadJSON(name, options)
 	options = options or {}
-	local build = options.build
-	build = FindBuild(name, build)
+	local build = FindBuild(name, options.build)
 	-- cache json
 	local path = string.format(json_cache, name, build)
 	local file = io.open(path, "r")
