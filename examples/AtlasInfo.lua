@@ -8,7 +8,7 @@ local function SortTable(tbl, key)
 end
 
 local function AtlasInfo(BUILD)
-	local filedata = parser.ReadListfile()
+	local filedata = parser.ReadListfile(true)
 	local uitextureatlas = parser.ReadCSV("uitextureatlas", {build=BUILD, header=true})
 	local atlasTable, atlasOrder, atlasSize = {}, {}, {}
 	for line in uitextureatlas:lines() do
