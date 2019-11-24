@@ -1,3 +1,5 @@
+-- https://github.com/ketho-wow/WardrobeSort/blob/master/Data/FileData.lua
+-- https://github.com/ketho-wow/ClickMorph/blob/master/Data/ItemAppearance.lua
 local parser = require "wowtoolsparser"
 local output = "out/ItemAppearance.lua"
 local data = {}

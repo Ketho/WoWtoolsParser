@@ -1,3 +1,4 @@
+-- https://github.com/Icesythe7/iMorph/blob/master/iMorph/iMorphConst.lua
 local parser = require "wowtoolsparser"
 
 -- https://github.com/Gethe/wow-ui-source/blob/classic/FrameXML/Constants.lua#L311
