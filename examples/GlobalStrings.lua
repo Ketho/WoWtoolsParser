@@ -40,11 +40,11 @@ local function GlobalStrings(BUILD)
 		-- unescape any quotes before escaping quotes
 		value = value:gsub('\\\"', '"')
 		value = value:gsub('"', '\\\"')
+		-- dont know any good pattern that does not screw with the rest
 		-- escape single backslashes manually
 		if slashStrings[key] then
 			value = value:gsub("\\", "\\\\")
 		end
-		-- dont know any good pattern that does not screw with the rest
 		-- check if the key is proper short table syntax
 		local fs = IsValidTableKey(key) and short or full
 		file:write(fs:format(key, value), "\n")
