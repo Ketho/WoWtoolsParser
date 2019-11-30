@@ -1,4 +1,4 @@
--- https://github.com/ketho-wow/ClickMorph/blob/master/Classic/ItemSet.lua
+-- https://github.com/ketho-wow/ClickMorph/blob/master/Data/Classic/ItemSet.lua
 local parser = require "wowtoolsparser"
 local output = "out/ItemSet.lua"
 
