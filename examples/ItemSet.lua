@@ -1,5 +1,6 @@
--- https://github.com/Icesythe7/iMorph/blob/master/iMorph/iMorphConst.lua
+-- https://github.com/ketho-wow/ClickMorph/blob/master/Classic/ItemSet.lua
 local parser = require "wowtoolsparser"
+local output = "out/ItemSet.lua"
 
 -- https://github.com/Gethe/wow-ui-source/blob/classic/FrameXML/Constants.lua#L311
 local INVSLOT_AMMO = 0
@@ -102,14 +103,16 @@ local function ParseDBC(dbc, BUILD)
 	return handler[dbc](iter)
 end
 
-local function ClassicItemSets(BUILD)
+local function ItemSet(BUILD)
 	local item_inventoryType = ParseDBC("item", BUILD)
 	local set_names, set_itemIDs = ParseDBC("itemset", BUILD)
-	print("IMorphSets = {")
+	print("writing to "..output)
+	local file = io.open(output, "w")
+	file:write("local ItemSet = {\n")
 
 	for _, setID in pairs(SortTableKey(set_names)) do
-		print(string.format("\t[%d] = {", setID))
-		print(string.format('\t\tname = "%s",', set_names[setID]))
+		file:write(string.format("\t[%d] = {\n", setID))
+		file:write(string.format('\t\tname = "%s",\n', set_names[setID]))
 		local sortedSet = {}
 		for _, itemID in pairs(set_itemIDs[setID]) do
 			table.insert(sortedSet, {
@@ -123,13 +126,14 @@ local function ClassicItemSets(BUILD)
 		end)
 		for _, v in pairs(sortedSet) do
 			if v.slot > 0 then -- neck, finger, trinket cant be morphed
-				print(string.format("\t\t[%d] = %d, -- %d", v.slot, v.itemID, v.inventoryType))
+				file:write(string.format("\t\t[%d] = %d, -- %d\n", v.slot, v.itemID, v.inventoryType))
 			end
 		end
-		print("\t},")
+		file:write("\t},\n")
 	end
-	print("}")
+	file:write("}\n\nreturn ItemSet\n")
+	file:close()
+	print("finished")
 end
 
--- https://gist.github.com/Ketho/2eb100d509e68bf3f49ffa10b3b7d9f4
-ClassicItemSets("1.13.2")
+ItemSet("1.13.2")

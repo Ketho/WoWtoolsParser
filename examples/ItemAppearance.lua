@@ -106,6 +106,7 @@ local function ItemAppearance(BUILD)
 	end
 	file:write("}\n\nreturn ItemAppearance\n")
 	file:close()
+	print("finished")
 end
 
 ItemAppearance()
