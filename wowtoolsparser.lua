@@ -5,6 +5,8 @@ local csv = require "csv"
 local gumbo = require "gumbo"
 local parser = {}
 
+local user_agent = "your user agent here"
+
 local html_url = "https://wow.tools/dbc/?dbc=%s"
 local json_url = "https://wow.tools/api/data/%s/?build=%s&length=%d"
 local csv_url = "https://wow.tools/api/export/?name=%s&build=%s"
@@ -27,6 +29,7 @@ local function HTTP_GET(url, file)
 			data[idx] = str
 		end,
 		ssl_verifypeer = false,
+		useragent = user_agent,
 	}:perform():close()
 	return table.concat(data)
 end
