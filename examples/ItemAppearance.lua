@@ -3,7 +3,7 @@
 local parser = require "wowtoolsparser"
 local output = "out/ItemAppearance.lua"
 local data = {}
-local filedata
+local fd
 
 local suffix = {
 	"_al_[ufm]",
@@ -53,7 +53,7 @@ local handler = {
 		for l in iter:lines() do
 			local ID = tonumber(l.ItemDisplayInfoID)
 			local MRID = tonumber(l.MaterialResourcesID)
-			if ID and filedata[data.texturefiledata[MRID]] then
+			if ID and fd[data.texturefiledata[MRID]] then
 				t[ID] = MRID
 			end
 		end
@@ -77,7 +77,7 @@ local function ParseDBC(dbc, BUILD)
 end
 
 local function ItemAppearance(BUILD)
-	filedata = parser.ReadListfile(true)
+	fd = parser.ReadListfile(true)
 	for _, name in pairs(order) do
 		print("reading "..name)
         data[name] = ParseDBC(name, BUILD)
@@ -94,9 +94,9 @@ local function ItemAppearance(BUILD)
 		idimr = idimr and idimr > 0 and idimr
 		local displayInfo = idi or idimr
 		if displayInfo then
-			local fd = filedata[data.texturefiledata[displayInfo]]
-			if fd then
-				local visualName = fd:match(".+/(.+)%.blp")
+			local txfd = fd[data.texturefiledata[displayInfo]]
+			if txfd then
+				local visualName = txfd:match(".+/(.+)%.blp")
 				for _, v in pairs(suffix) do
 					visualName = visualName:gsub(v, "")
 				end
