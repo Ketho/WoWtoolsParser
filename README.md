@@ -13,7 +13,7 @@ end
 Prints the most recent classic [ChrRaces.db2](https://wow.tools/dbc/?dbc=chrraces&build=1.13.2.32089) build
 ```lua
 local parser = require "wowtoolsparser"
-parser.ExplodeCSV(parser.ReadCSV("chrraces", {build="1.13.2"}))
+parser.ExplodeCSV(parser.ReadCSV("chrraces", {build="1.13.3"}))
 ```
 Prints a specific [GlobalStrings.db2](https://wow.tools/dbc/?dbc=globalstrings&build=7.3.5.26972) build and accesses table keys by header name
 ```lua
