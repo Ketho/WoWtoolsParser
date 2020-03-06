@@ -42,7 +42,7 @@ local function GlobalStrings(BUILD)
 		value = value:gsub('\\\"', '"')
 		value = value:gsub('"', '\\\"')
 		-- apparently this is only unescaped for retail/ptr and fixed on classic
-		if slashStrings[key] and BUILD ~= "1.13.3" then	
+		if slashStrings[key] and BUILD ~= "1.13" then	
 			value = value:gsub("\\", "\\\\")	
 		end
 		-- check if the key is proper short table syntax
@@ -54,5 +54,5 @@ local function GlobalStrings(BUILD)
 end
 
 GlobalStrings()
---GlobalStrings("8.2.5")
---GlobalStrings("1.13.3")
+--GlobalStrings("8.3.0")
+--GlobalStrings("1.13")
