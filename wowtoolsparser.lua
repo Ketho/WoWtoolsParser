@@ -47,7 +47,7 @@ local function FindBuild(name, build)
 			local firstBuild = element.childNodes[2]:getAttribute("value")
 			return firstBuild
 		else
-			-- if target is just "7.3.5" or "1.13.2", check for major version
+			-- if target is just "7.3.5" or "1.13", check for major version
 			local majorversion = "^"..build:gsub("%.", "%%.") -- escape dots
 			for i = 2, #element.childNodes, 2 do
 				local value = element.childNodes[i]:getAttribute("value")
