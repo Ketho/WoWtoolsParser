@@ -60,6 +60,7 @@ local function AtlasInfo(BUILD)
 
 	print("writing to "..output)
 	local file = io.open(output, "w")
+	file:write("-- see also https://wow.gamepedia.com/API_C_Texture.GetAtlasInfo\n")
 	file:write("-- atlas = width, height, leftTexCoord, rightTexCoord, topTexCoord, bottomTexCoord, tilesHorizontally, tilesVertically\n")
 	file:write("local AtlasInfo = {\n")
 	for _, atlas in pairs(atlasOrder) do
