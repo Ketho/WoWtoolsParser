@@ -76,6 +76,7 @@ function parser.ReadCSV(name, options)
 		HTTP_GET(csv_url:format(name, build), file)
 		file:close()
 	end
+	print(string.format("reading %s.csv build %s", name, build))
 	local iter = csv.open(path, options.header and {header = true})
 	return iter
 end
@@ -99,6 +100,7 @@ function parser.ReadJSON(name, options)
 		HTTP_GET(json_url:format(name, build, recordsTotal), file)
 		file:close()
 	end
+	print(string.format("reading %s.json build %s", name, build))
 	local json = cjsonutil.file_load(path)
 	local tbl = cjson.decode(json).data
 	return tbl
