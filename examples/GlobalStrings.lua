@@ -5,10 +5,15 @@ local output = "out/GlobalStrings.lua"
 local short = '%s = "%s";'
 local full = '_G["%s"] = "%s";'
 
-local slashStrings = {	
-	KEY_BACKSLASH = true,	
-	CHATLOGENABLED = true,	
-	COMBATLOGENABLED = true,	
+local slashStrings = {
+	KEY_BACKSLASH = true,
+	CHATLOGENABLED = true,
+	COMBATLOGENABLED = true,
+}
+
+local hacks = {
+	-- https://wow.tools/dbc/?dbc=globalstrings#search=PARTY_PLAYER_CHROMIE_TIME_FMT
+	PARTY_PLAYER_CHROMIE_TIME_FMT = [[%s\n\n\\%s]], -- uhh wtf; 9.0.1 (35256)
 }
 
 local function IsValidTableKey(s)
@@ -42,9 +47,13 @@ local function GlobalStrings(BUILD)
 		value = value:gsub('\\\"', '"')
 		value = value:gsub('"', '\\\"')
 		-- apparently this is only unescaped for retail/ptr and fixed on classic
-		if slashStrings[key] and BUILD ~= "1.13" then	
-			value = value:gsub("\\", "\\\\")	
+		if slashStrings[key] and BUILD ~= "1.13" then
+			value = value:gsub("\\", "\\\\")
 		end
+		if hacks[key] then
+			value = hacks[key]
+		end
+
 		-- check if the key is proper short table syntax
 		local fs = IsValidTableKey(key) and short or full
 		file:write(fs:format(key, value), "\n")
