@@ -8,7 +8,7 @@ local full = '_G["%s"] = "%s";'
 local slashStrings = {
 	KEY_BACKSLASH = true,
 	CHATLOGENABLED = true,
-	COMBATLOGENABLED = true,
+	-- COMBATLOGENABLED = true,
 }
 
 local hacks = {
