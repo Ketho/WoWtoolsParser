@@ -2,19 +2,20 @@ local cURL = require "cURL"
 local cjson = require "cjson"
 local cjsonutil = require "cjson.util"
 local csv = require "csv"
-local gumbo = require "gumbo"
 local parser = {}
 
 local user_agent = "your user agent here"
 
-local html_url = "https://wow.tools/dbc/?dbc=%s"
-local json_url = "https://wow.tools/api/data/%s/?build=%s&length=%d"
-local csv_url = "https://wow.tools/api/export/?name=%s&build=%s"
 local listfile_url = "https://wow.tools/casc/listfile/download/csv/unverified"
+--local databases_url = "https://api.wow.tools/databases"
+local versions_url = "https://api.wow.tools/databases/%s/versions"
+local csv_url = "https://wow.tools/api/export/?name=%s&build=%s"
+local json_url = "https://wow.tools/api/data/%s/?build=%s&length=%d"
 
+local listfile_cache = "cache/listfile.csv"
+local versions_cache = "cache/%s_versions.json"
 local csv_cache = "cache/%s_%s.csv"
 local json_cache = "cache/%s_%s.json"
-local listfile_cache = "cache/listfile.csv"
 
 --- Sends an HTTP GET request.
 -- @param url the URL of the request
@@ -34,42 +35,47 @@ local function HTTP_GET(url, file)
 	return table.concat(data)
 end
 
---- Finds a wow.tools build from an HTML document.
+--- Gets all build versions for a database.
 -- @param name the DBC name
--- @param html the HTML document
--- @return build the build number (e.g. "8.2.0.30993")
+-- @return table available build versions
+local function GetVersions(name)
+	local path = versions_cache:format(name)
+	local file = io.open(path, "w")
+	HTTP_GET(versions_url:format(name), file)
+	file:close()
+	local json = cjsonutil.file_load(path)
+	local tbl = cjson.decode(json)
+	return tbl
+end
+
+--- Finds a wow.tools build.
+-- @param name the DBC name
+-- @param build the build to search for
+-- @return string the build number (e.g. "8.2.0.30993")
 local function FindBuild(name, build)
-	if not build or #build <= 6 then
-		local html = HTTP_GET(html_url:format(name))
-		local document = gumbo.parse(html)
-		local element = document:getElementById("buildFilter")
-		if not build then
-			local firstBuild = element.childNodes[2]:getAttribute("value")
-			return firstBuild
-		else
-			-- if target is just "7.3.5" or "1.13", check for major version
-			local majorversion = "^"..build:gsub("%.", "%%.") -- escape dots
-			for i = 2, #element.childNodes, 2 do
-				local value = element.childNodes[i]:getAttribute("value")
-				if value:find(majorversion) then
-					return value
-				end
+	local versions = GetVersions(name)
+	if build then
+		for _, version in pairs(versions) do
+			if version:find(build) then
+				return version
 			end
 		end
+		error(string.format("build \"%s\" is not available for %s", build, name))
+	else
+		return versions[1] -- the most recent build
 	end
-	return build
 end
 
 --- Parses the DBC (with header) from CSV.
 -- @param name the DBC name
 -- @param options.build (optional) the build version, otherwise falls back to the most recent build
 -- @param options.header (optional) if true, each set of fields will be keyed by header name, otherwise by column index
--- @return iter the csv iterator
+-- @return function the csv iterator
 function parser.ReadCSV(name, options)
 	options = options or {}
 	local build = FindBuild(name, options.build)
 	-- cache csv
-	local path = string.format(csv_cache, name, build)
+	local path = csv_cache:format(name, build)
 	local file = io.open(path, "r")
 	if not file then
 		file = io.open(path, "w")
@@ -84,12 +90,12 @@ end
 --- Parses the DBC from JSON.
 -- @param name the DBC name
 -- @param options.build (optional) the build version, otherwise falls back to the most recent build
--- @return tbl the converted json table
+-- @return table the converted json table
 function parser.ReadJSON(name, options)
 	options = options or {}
 	local build = FindBuild(name, options.build)
 	-- cache json
-	local path = string.format(json_cache, name, build)
+	local path = json_cache:format(name, build)
 	local file = io.open(path, "r")
 	if not file then
 		file = io.open(path, "w")
