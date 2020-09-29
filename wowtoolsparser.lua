@@ -10,7 +10,7 @@ local listfile_url = "https://wow.tools/casc/listfile/download/csv/unverified"
 --local databases_url = "https://api.wow.tools/databases"
 local versions_url = "https://api.wow.tools/databases/%s/versions"
 local csv_url = "https://wow.tools/api/export/?name=%s&build=%s"
-local json_url = "https://wow.tools/api/data/%s/?build=%s&length=0" -- saves them a slice call
+local json_url = "https://wow.tools/api/data/%s/?build=%s&length=%d" -- saves them a slice call
 
 local listfile_cache = "cache/listfile.csv"
 local versions_cache = "cache/%s_versions.json"
@@ -100,7 +100,7 @@ function parser.ReadJSON(name, options)
 	if not file then
 		file = io.open(path, "w")
 		-- get number of records
-		local initialRequest = HTTP_GET(json_url:format(name, build))
+		local initialRequest = HTTP_GET(json_url:format(name, build, 0))
 		local recordsTotal = cjson.decode(initialRequest).recordsTotal
 		-- write json to file
 		HTTP_GET(json_url:format(name, build, recordsTotal), file)
