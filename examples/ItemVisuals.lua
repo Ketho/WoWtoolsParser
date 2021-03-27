@@ -11,13 +11,13 @@ local function GetFirstID(t)
 end
 
 local function ItemVisuals(BUILD)
-	local fd = parser.ReadListfile(true)
+	local fd = parser.ReadListfile()
 	local iter = parser.ReadCSV("itemvisuals", {build=BUILD, header=true})
 	--local fsRaw = '\t[%d] = {%s},\n'
 	local fsName = '\t[%d] = "%s",\n'
 	local modelFileID = {}
 
-	print("writing to "..output)
+	print("writing "..output)
 	local file = io.open(output, "w")
 	file:write("local ItemVisuals = {\n")
 	for l in iter:lines() do

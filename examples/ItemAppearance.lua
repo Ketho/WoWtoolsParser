@@ -77,14 +77,14 @@ local function ParseDBC(dbc, BUILD)
 end
 
 local function ItemAppearance(BUILD)
-	fd = parser.ReadListfile(true)
+	fd = parser.ReadListfile()
 	for _, name in pairs(order) do
 		print("reading "..name)
         data[name] = ParseDBC(name, BUILD)
 	end
 	local fs = '[%d]="%s",\n'
 
-	print("writing to "..output)
+	print("writing "..output)
 	local file = io.open(output, "w")
 	file:write("local ItemAppearance = {\n")
 	for id, val in pairs(data.itemappearance) do

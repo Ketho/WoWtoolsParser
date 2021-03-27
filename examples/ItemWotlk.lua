@@ -25,7 +25,7 @@ local function ItemWotlk(BUILD)
 
 	local fs_noname = '\t[%d] = {%d, "%s"},\n'
 	local fs_name = '\t[%d] = {%d, "%s", "%s"},\n'
-	print("writing to "..output)
+	print("writing "..output)
 	local file = io.open(output, "w")
 	file:write("local ItemWotlk = {\n")
 	file:write("\t-- ID = InventoryType, Icon, Name\n")

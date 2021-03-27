@@ -106,7 +106,7 @@ end
 local function ItemSet(BUILD)
 	local item_inventoryType = ParseDBC("item", BUILD)
 	local set_names, set_itemIDs = ParseDBC("itemset", BUILD)
-	print("writing to "..output)
+	print("writing "..output)
 	local file = io.open(output, "w")
 	file:write("local ItemSet = {\n")
 

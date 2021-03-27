@@ -8,7 +8,7 @@ local full = '_G["%s"] = "%s";'
 local slashStrings = {
 	KEY_BACKSLASH = true,
 	CHATLOGENABLED = true,
-	-- COMBATLOGENABLED = true,
+	--COMBATLOGENABLED = true,
 }
 
 local hacks = {
@@ -20,9 +20,10 @@ local function IsValidTableKey(s)
 	return not s:find("-") and not s:find("^%d")
 end
 
-local function GlobalStrings(BUILD)
+local function GlobalStrings(options)
+	options = options or {}
 	-- filter and sort globalstrings
-	local globalstrings = parser.ReadCSV("globalstrings", {build=BUILD, header=true})
+	local globalstrings = parser.ReadCSV("globalstrings", options)
 	local stringsTable = {}
 	for line in globalstrings:lines() do
 		local flags = tonumber(line.Flags)
@@ -38,7 +39,7 @@ local function GlobalStrings(BUILD)
 		return a.BaseTag < b.BaseTag
 	end)
 
-	print("writing to "..output)
+	print("writing "..output)
 	local file = io.open(output, "w")
 	for _, tbl in pairs(stringsTable) do
 		local key, value = tbl.BaseTag, tbl.TagText
@@ -47,7 +48,7 @@ local function GlobalStrings(BUILD)
 		value = value:gsub('\\\"', '"')
 		value = value:gsub('"', '\\\"')
 		-- apparently this is only unescaped for retail/ptr and fixed on classic
-		if slashStrings[key] and BUILD ~= "1.13" then
+		if slashStrings[key] and options.BUILD ~= "1.13" then
 			value = value:gsub("\\", "\\\\")
 		end
 		if hacks[key] then
@@ -62,6 +63,8 @@ local function GlobalStrings(BUILD)
 	print("finished")
 end
 
-GlobalStrings()
---GlobalStrings("8.3")
---GlobalStrings("1.13")
+GlobalStrings({header=true})
+
+-- GlobalStrings({header=true, build="9.0.2"})
+-- GlobalStrings({header=true, build="1.13"})
+-- GlobalStrings({header=true, locale="deDE"})

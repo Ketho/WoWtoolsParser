@@ -9,7 +9,7 @@ local function SortTable(tbl, key)
 end
 
 local function AtlasInfo(BUILD)
-	local filedata = parser.ReadListfile(true)
+	local filedata = parser.ReadListfile()
 	local uitextureatlas = parser.ReadCSV("uitextureatlas", {build=BUILD, header=true})
 	local atlasTable, atlasOrder, atlasSize = {}, {}, {}
 	for line in uitextureatlas:lines() do
@@ -58,7 +58,7 @@ local function AtlasInfo(BUILD)
 	local fsAtlas = '\t["%s"] = { -- %d\n'
 	local fsMember = '\t\t["%s"] = {%d, %d, %s, %s, %s, %s, %s, %s},\n'
 
-	print("writing to "..output)
+	print("writing "..output)
 	local file = io.open(output, "w")
 	file:write("-- see also https://wow.gamepedia.com/API_C_Texture.GetAtlasInfo\n")
 	file:write("-- atlas = width, height, leftTexCoord, rightTexCoord, topTexCoord, bottomTexCoord, tilesHorizontally, tilesVertically\n")

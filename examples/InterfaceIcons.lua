@@ -3,7 +3,7 @@ local parser = require "wowtoolsparser"
 local output = "out/InterfaceIcons.lua"
 
 local function main(BUILD)
-	local filedata = parser.ReadListfile(true)
+	local filedata = parser.ReadListfile()
 	local sorted = {}
 	for fdid, path in pairs(filedata) do
 		local _, _, icon = path:find("interface/icons/(.+)%.blp$")
@@ -16,7 +16,7 @@ local function main(BUILD)
 	end)
 
 	local fs = '[%d]="%s",\n'
-	print("writing to "..output)
+	print("writing "..output)
 	local file = io.open(output, "w")
 	file:write("local InterfaceIcons = {\n")
 	for _, tbl in pairs(sorted) do

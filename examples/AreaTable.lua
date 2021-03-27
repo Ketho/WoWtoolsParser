@@ -25,7 +25,7 @@ local function SortKeys(tbl)
 end
 
 local function main(BUILD)
-	print("writing to "..output)
+	print("writing "..output)
 	local file = io.open(output, "w")
 
 	local areatable_csv = parser.ReadCSV("areatable", {build=BUILD, header=true})

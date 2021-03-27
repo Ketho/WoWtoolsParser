@@ -146,7 +146,7 @@ local function LibRecipes(BUILD)
 		end)
 	end
 	-- write data
-	print("writing to "..output)
+	print("writing "..output)
 	local file = io.open(output, "w")
 	local fs = "lib:AddRecipe(%d, %s, %s) -- %s\n"
 	for _, subclassID in pairs(LibRecipesOrder) do
