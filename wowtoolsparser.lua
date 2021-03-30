@@ -106,7 +106,7 @@ function parser.ReadCSV(name, options)
 	local build = FindBuild(name, options.build)
 	local base = GetBaseName(name, build, options)
 	local path = csv_cache:format(base)
-	if not lfs.attributes(path) then -- cache csv
+	if not lfs.attributes(path) then
 		local file = io.open(path, "w")
 		local url = csv_url:format(name, build)
 		if options.locale then
@@ -130,12 +130,10 @@ function parser.ReadJSON(name, options)
 	local build = FindBuild(name, options.build)
 	local base = GetBaseName(name, build, options)
 	local path = json_cache:format(base)
-	if not lfs.attributes(path) then -- cache json
+	if not lfs.attributes(path) then
 		local file = io.open(path, "w")
-		-- get number of records
 		local initialRequest = HTTP_GET(json_url:format(name, build, 0))
 		local recordsTotal = cjson.decode(initialRequest).recordsTotal
-		-- write json to file
 		local url = json_url:format(name, build, recordsTotal)
 		if options.locale then
 			url = url.."&locale="..options.locale
@@ -150,16 +148,13 @@ function parser.ReadJSON(name, options)
 end
 
 --- Parses the CSV listfile.
--- @param refresh (optional) if the listfile should be redownloaded
 function parser.ReadListfile()
-	-- cache listfile
 	if ShouldDownload(listfile_cache) then
 		print("downloading listfile...")
 		local file = io.open(listfile_cache, "w")
 		HTTP_GET(listfile_url, file)
 		file:close()
 	end
-	-- read listfile
 	local iter = csv.open(listfile_cache, {separator = ";"})
 	local filedata = {}
 	print("reading listfile...")
