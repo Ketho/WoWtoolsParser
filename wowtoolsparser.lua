@@ -101,6 +101,7 @@ end
 -- @param options.header (optional) if true, fields will be keyed by header name instead of column index
 -- @param options.locale (optional) the locale, otherwise uses english
 -- @return function the csv iterator
+-- @return string the used build
 function parser.ReadCSV(name, options)
 	options = options or {}
 	local build = FindBuild(name, options.build)
@@ -117,7 +118,7 @@ function parser.ReadCSV(name, options)
 	end
 	print("reading "..path)
 	local iter = csv.open(path, {header = options.header})
-	return iter
+	return iter, build
 end
 
 --- Parses the DBC from JSON.
@@ -125,6 +126,7 @@ end
 -- @param options.build (optional) the build version, otherwise uses the most recent build
 -- @param options.locale (optional) the locale, otherwise uses english
 -- @return table the converted json table
+-- @return string the used build
 function parser.ReadJSON(name, options)
 	options = options or {}
 	local build = FindBuild(name, options.build)
@@ -144,7 +146,7 @@ function parser.ReadJSON(name, options)
 	print("reading "..path)
 	local json = cjsonutil.file_load(path)
 	local tbl = cjson.decode(json).data
-	return tbl
+	return tbl, build
 end
 
 --- Parses the CSV listfile.
