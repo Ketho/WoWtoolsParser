@@ -11,8 +11,8 @@ local CACHE_INVALIDATION_TIME = 600
 local listfile_url = "https://wow.tools/casc/listfile/download/csv/unverified"
 --local databases_url = "https://api.wow.tools/databases"
 local versions_url = "https://api.wow.tools/databases/%s/versions"
-local csv_url = "https://wow.tools/api/export/?name=%s&build=%s"
-local json_url = "https://wow.tools/api/data/%s/?build=%s&length=%d" -- saves them a slice call
+local csv_url = "https://wow.tools/api/export/?name=%s&build=%s&useHotfixes=true"
+local json_url = "https://wow.tools/api/data/%s/?build=%s&useHotfixes=true&length=%d" -- saves them a slice call
 
 local listfile_cache = "cache/listfile.csv"
 local versions_cache = "cache/%s_versions.json"
