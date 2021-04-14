@@ -5,22 +5,23 @@ local cjson = require "cjson"
 local cjsonutil = require "cjson.util"
 local parser = {}
 
-local user_agent = "your user agent here"
-local CACHE_INVALIDATION_TIME = 600
-
 local listfile_url = "https://wow.tools/casc/listfile/download/csv/unverified"
 --local databases_url = "https://api.wow.tools/databases"
 local versions_url = "https://api.wow.tools/databases/%s/versions"
 local csv_url = "https://wow.tools/api/export/?name=%s&build=%s&useHotfixes=true"
 local json_url = "https://wow.tools/api/data/%s/?build=%s&useHotfixes=true&length=%d" -- saves them a slice call
 
-local listfile_cache = "cache/listfile.csv"
-local versions_cache = "cache/%s_versions.json"
-local csv_cache = "cache/%s.csv"
-local json_cache = "cache/%s.json"
+local USER_AGENT = "your user agent here"
+local CACHE_PATH = "cache"
+local CACHE_INVALIDATION_TIME = 600
 
-if not lfs.attributes("cache") then
-	lfs.mkdir("cache")
+local listfile_cache = CACHE_PATH.."/listfile.csv"
+local versions_cache = CACHE_PATH.."/%s_versions.json"
+local csv_cache = CACHE_PATH.."/%s.csv"
+local json_cache = CACHE_PATH.."/%s.json"
+
+if not lfs.attributes(CACHE_PATH) then
+	lfs.mkdir(CACHE_PATH)
 end
 
 local function GetBaseName(name, build, options)
@@ -36,7 +37,7 @@ local function ShouldDownload(path)
 	local attr = lfs.attributes(path)
 	if not attr then
 		return true
-	else
+	elseif path:find("versions%.json") or path:find("listfile%.csv") then
 		local modified = attr.modification
 		if os.time() > modified + CACHE_INVALIDATION_TIME then
 			return true
@@ -44,7 +45,7 @@ local function ShouldDownload(path)
 	end
 end
 
---- Sends an HTTP GET request.
+--- Sends an HTTP GET request
 -- @param url the URL of the request
 -- @param file (optional) file to be written
 -- @return string if file is given, the HTTP response
@@ -57,12 +58,12 @@ local function HTTP_GET(url, file)
 			data[idx] = str
 		end,
 		ssl_verifypeer = false,
-		useragent = user_agent,
+		useragent = USER_AGENT,
 	}:perform():close()
 	return table.concat(data)
 end
 
---- Gets all build versions for a database.
+--- Gets all build versions for a database
 -- @param name the DBC name
 -- @return table available build versions
 local function GetVersions(name)
@@ -77,7 +78,7 @@ local function GetVersions(name)
 	return tbl
 end
 
---- Finds a wow.tools build.
+--- Finds a wow.tools build
 -- @param name the DBC name
 -- @param build the build to search for
 -- @return string the build number (e.g. "8.2.0.30993")
@@ -95,7 +96,7 @@ local function FindBuild(name, build)
 	end
 end
 
---- Parses the DBC (with header) from CSV.
+--- Parses the DBC (with header) from CSV
 -- @param name the DBC name
 -- @param options.build (optional) the build version, otherwise uses the most recent build
 -- @param options.header (optional) if true, fields will be keyed by header name instead of column index
@@ -121,7 +122,7 @@ function parser.ReadCSV(name, options)
 	return iter, build
 end
 
---- Parses the DBC from JSON.
+--- Parses the DBC from JSON
 -- @param name the DBC name
 -- @param options.build (optional) the build version, otherwise uses the most recent build
 -- @param options.locale (optional) the locale, otherwise uses english
@@ -149,7 +150,7 @@ function parser.ReadJSON(name, options)
 	return tbl, build
 end
 
---- Parses the CSV listfile.
+--- Parses the CSV listfile
 function parser.ReadListfile()
 	if ShouldDownload(listfile_cache) then
 		print("downloading listfile...")
