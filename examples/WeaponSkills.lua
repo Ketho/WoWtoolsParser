@@ -26,10 +26,10 @@ for _, locale in pairs(locales) do
 
 	file:write(string.format("\t%s = {\n", locale))
 	for l in iter:lines() do
-		local id = tonumber(l.ID)
-		if id then
+		local ID = tonumber(l.ID)
+		if ID then
 			if tonumber(l.CategoryID) == 6 then
-				file:write(string.format('\t\t["%s"] = %d,\n', l.DisplayName_lang, id))
+				file:write(string.format('\t\t["%s"] = %d,\n', l.DisplayName_lang, ID))
 			end
 		end
 	end

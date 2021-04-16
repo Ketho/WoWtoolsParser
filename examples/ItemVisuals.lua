@@ -21,17 +21,17 @@ local function ItemVisuals(BUILD)
 	local file = io.open(output, "w")
 	file:write("local ItemVisuals = {\n")
 	for l in iter:lines() do
-		local id = tonumber(l.ID)
-		if id then
-			modelFileID[id] = {}
+		local ID = tonumber(l.ID)
+		if ID then
+			modelFileID[ID] = {}
 			for i = 0, 4 do
-				table.insert(modelFileID[id], tonumber(l["ModelFileID["..i.."]"]))
+				table.insert(modelFileID[ID], tonumber(l["ModelFileID["..i.."]"]))
 			end
-			local firstID = GetFirstID(modelFileID[id])
+			local firstID = GetFirstID(modelFileID[ID])
 			if firstID and fd[firstID] then -- ID 352 does not have a fd entry
-				--file:write(fsRaw:format(id, table.concat(modelFileID[id], ", ")))
+				--file:write(fsRaw:format(ID, table.concat(modelFileID[ID], ", ")))
 				local name = fd[firstID]:match(".+/(.+)%.m2")
-				file:write(fsName:format(id, name))
+				file:write(fsName:format(ID, name))
 			end
 		end
 	end
