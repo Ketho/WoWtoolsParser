@@ -5,7 +5,6 @@ local locales = {
 	"enUS",
 	"deDE",
 	"frFR",
-	"esES",
 	"esMX",
 	"ptBR",
 	"ruRU",
@@ -30,11 +29,10 @@ for _, locale in pairs(locales) do
 		local id = tonumber(l.ID)
 		if id then
 			if tonumber(l.CategoryID) == 6 then
-				file:write(string.format('\t\t[%d] = "%s",\n', id, l.DisplayName_lang))
+				file:write(string.format('\t\t["%s"] = %d,\n', l.DisplayName_lang, id))
 			end
 		end
 	end
 	file:write("\t},\n")
 end
-
 file:write("}\n")
