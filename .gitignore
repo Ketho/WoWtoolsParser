@@ -2,3 +2,4 @@
 .luacheckrc
 *.csv
 *.json
+*.txt
