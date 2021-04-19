@@ -6,14 +6,14 @@ local short = '%s = "%s";'
 local full = '_G["%s"] = "%s";'
 
 local slashStrings = {
-	KEY_BACKSLASH = true,
-	--CHATLOGENABLED = true,
+	KEY_BACKSLASH = function(s) return s:sub(1, 2) == "9." end, -- broken in 9.1.0
+	CHATLOGENABLED = function(s) return s:sub(1, 3) == "9.0" end, -- broken in 9.0.5
 	--COMBATLOGENABLED = true,
 }
 
-local hacks = {
+local override = {
 	-- https://wow.tools/dbc/?dbc=globalstrings#search=PARTY_PLAYER_CHROMIE_TIME_FMT
-	PARTY_PLAYER_CHROMIE_TIME_FMT = [[%s\n\n\\%s]], -- uhh wtf; 9.0.1 (35256)
+	PARTY_PLAYER_CHROMIE_TIME_FMT = [[%s\n\n\\%s]], -- 9.0.1 (35256)
 }
 
 local function IsValidTableKey(s)
@@ -28,8 +28,7 @@ local function GlobalStrings(options)
 	local stringsTable = {}
 	for line in globalstrings:lines() do
 		local flags = tonumber(line.Flags)
-		-- strings with flags 0 and 2 are not available in-game
-		if flags == 0x1 or flags == 0x3 then
+		if flags and flags&0x1 > 0 then
 			table.insert(stringsTable, {
 				BaseTag = line.BaseTag,
 				TagText = line.TagText_lang
@@ -48,12 +47,11 @@ local function GlobalStrings(options)
 		-- unescape any quotes before escaping quotes
 		value = value:gsub('\\\"', '"')
 		value = value:gsub('"', '\\\"')
-		-- apparently this is only unescaped for retail and fixed on classic/bc
-		if slashStrings[key] and string.sub(usedBuild, 1, 2) == "9." then
+		if slashStrings[key] and slashStrings[key](usedBuild) then
 			value = value:gsub("\\", "\\\\")
 		end
-		if hacks[key] then
-			value = hacks[key]
+		if override[key] then
+			value = override[key]
 		end
 
 		-- check if the key is proper short table syntax
@@ -65,6 +63,6 @@ local function GlobalStrings(options)
 end
 
 GlobalStrings()
--- GlobalStrings({build="9.0.2"})
+-- GlobalStrings({build="9.0.5"})
 -- GlobalStrings({build="1.13"})
 -- GlobalStrings({locale="deDE"})

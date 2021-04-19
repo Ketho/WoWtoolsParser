@@ -51,7 +51,7 @@ local function AtlasInfo(options)
 				right = right / size.width,
 				top = top / size.height,
 				bottom = bottom / size.height,
-				tileshoriz = line.CommittedFlags&0x4 > 0, -- requires lua 5.3
+				tileshoriz = line.CommittedFlags&0x4 > 0,
 				tilesvert = line.CommittedFlags&0x2 > 0,
 			})
 		end
@@ -80,5 +80,5 @@ local function AtlasInfo(options)
 end
 
 AtlasInfo()
--- AtlasInfo({build="9.0.2"})
+-- AtlasInfo({build="9.0.5"})
 -- AtlasInfo({build="1.13"})
