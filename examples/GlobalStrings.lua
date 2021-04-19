@@ -64,5 +64,6 @@ end
 
 GlobalStrings()
 -- GlobalStrings({build="9.0.5"})
--- GlobalStrings({build="1.13"})
+-- GlobalStrings({build="1.13."})
+-- GlobalStrings({build="2.5.1"})
 -- GlobalStrings({locale="deDE"})

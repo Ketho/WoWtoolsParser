@@ -86,7 +86,7 @@ local function FindBuild(name, build)
 	local versions = GetVersions(name)
 	if build then
 		for _, version in pairs(versions) do
-			if version:find(build) then
+			if version:find(build, 1, true) then
 				return version
 			end
 		end
