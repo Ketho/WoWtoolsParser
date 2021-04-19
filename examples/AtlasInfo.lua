@@ -8,9 +8,11 @@ local function SortTable(tbl, key)
 	end)
 end
 
-local function AtlasInfo(BUILD)
+local function AtlasInfo(options)
+	options = options or {}
+	options.header = true
 	local filedata = parser.ReadListfile()
-	local uitextureatlas = parser.ReadCSV("uitextureatlas", {build=BUILD, header=true})
+	local uitextureatlas = parser.ReadCSV("uitextureatlas", options)
 	local atlasTable, atlasOrder, atlasSize = {}, {}, {}
 	for line in uitextureatlas:lines() do
 		local atlasID = tonumber(line.ID)
@@ -30,7 +32,7 @@ local function AtlasInfo(BUILD)
 	end
 	SortTable(atlasOrder, "fileName")
 
-	local uitextureatlasmember = parser.ReadCSV("uitextureatlasmember", {build=BUILD, header=true})
+	local uitextureatlasmember = parser.ReadCSV("uitextureatlasmember", options)
 	for line in uitextureatlasmember:lines() do
 		local name = line.CommittedName
 		if name and name ~= "" then -- 1130222 interface/store/shop has empty atlas members
@@ -78,5 +80,5 @@ local function AtlasInfo(BUILD)
 end
 
 AtlasInfo()
---AtlasInfo("8.3")
---AtlasInfo("1.13")
+-- AtlasInfo({build="9.0.2"})
+-- AtlasInfo({build="1.13"})

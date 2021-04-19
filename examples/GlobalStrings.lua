@@ -7,7 +7,7 @@ local full = '_G["%s"] = "%s";'
 
 local slashStrings = {
 	KEY_BACKSLASH = true,
-	CHATLOGENABLED = true,
+	--CHATLOGENABLED = true,
 	--COMBATLOGENABLED = true,
 }
 
@@ -22,8 +22,9 @@ end
 
 local function GlobalStrings(options)
 	options = options or {}
+	options.header = true
 	-- filter and sort globalstrings
-	local globalstrings = parser.ReadCSV("globalstrings", options)
+	local globalstrings, usedBuild = parser.ReadCSV("globalstrings", options)
 	local stringsTable = {}
 	for line in globalstrings:lines() do
 		local flags = tonumber(line.Flags)
@@ -47,8 +48,8 @@ local function GlobalStrings(options)
 		-- unescape any quotes before escaping quotes
 		value = value:gsub('\\\"', '"')
 		value = value:gsub('"', '\\\"')
-		-- apparently this is only unescaped for retail/ptr and fixed on classic
-		if slashStrings[key] and options.BUILD ~= "1.13" then
+		-- apparently this is only unescaped for retail and fixed on classic/bc
+		if slashStrings[key] and string.sub(usedBuild, 1, 2) == "9." then
 			value = value:gsub("\\", "\\\\")
 		end
 		if hacks[key] then
@@ -63,8 +64,7 @@ local function GlobalStrings(options)
 	print("finished")
 end
 
-GlobalStrings({header=true})
-
--- GlobalStrings({header=true, build="9.0.2"})
--- GlobalStrings({header=true, build="1.13"})
--- GlobalStrings({header=true, locale="deDE"})
+GlobalStrings()
+-- GlobalStrings({build="9.0.2"})
+-- GlobalStrings({build="1.13"})
+-- GlobalStrings({locale="deDE"})
