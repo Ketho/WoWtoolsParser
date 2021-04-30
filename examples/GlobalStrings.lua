@@ -1,6 +1,7 @@
 -- https://github.com/Ketho/BlizzardInterfaceResources/blob/live/Resources/GlobalStrings.lua
 local parser = require "wowtoolsparser"
-local output = "out/GlobalStrings.lua"
+--local OUT_PATH = "out/GlobalStrings.lua"
+local OUT_PATH = "../BlizzardInterfaceResources/Resources/GlobalStrings.lua"
 
 local short = '%s = "%s";'
 local full = '_G["%s"] = "%s";'
@@ -39,8 +40,8 @@ local function GlobalStrings(options)
 		return a.BaseTag < b.BaseTag
 	end)
 
-	print("writing "..output)
-	local file = io.open(output, "w")
+	print("writing "..OUT_PATH)
+	local file = io.open(OUT_PATH, "w")
 	for _, tbl in pairs(stringsTable) do
 		local key, value = tbl.BaseTag, tbl.TagText
 		value = value:gsub('\\32', ' ') -- space char

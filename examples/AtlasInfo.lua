@@ -1,6 +1,7 @@
 -- https://github.com/Ketho/BlizzardInterfaceResources/blob/live/Resources/AtlasInfo.lua
 local parser = require "wowtoolsparser"
-local output = "out/AtlasInfo.lua"
+--local OUT_PATH = "out/AtlasInfo.lua"
+local OUT_PATH = "../BlizzardInterfaceResources/Resources/AtlasInfo.lua"
 
 local function SortTable(tbl, key)
 	table.sort(tbl, function(a, b)
@@ -60,8 +61,8 @@ local function AtlasInfo(options)
 	local fsAtlas = '\t["%s"] = { -- %d\n'
 	local fsMember = '\t\t["%s"] = {%d, %d, %s, %s, %s, %s, %s, %s},\n'
 
-	print("writing "..output)
-	local file = io.open(output, "w")
+	print("writing "..OUT_PATH)
+	local file = io.open(OUT_PATH, "w")
 	file:write("-- see also https://wow.gamepedia.com/API_C_Texture.GetAtlasInfo\n")
 	file:write("-- atlas = width, height, leftTexCoord, rightTexCoord, topTexCoord, bottomTexCoord, tilesHorizontally, tilesVertically\n")
 	file:write("local AtlasInfo = {\n")
