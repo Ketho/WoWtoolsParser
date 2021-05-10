@@ -2,7 +2,7 @@
 local parser = require "wowtoolsparser"
 local output = "out/InterfaceIcons.lua"
 
-local function main(BUILD)
+local function main()
 	local filedata = parser.ReadListfile()
 	local sorted = {}
 	for fdid, path in pairs(filedata) do
