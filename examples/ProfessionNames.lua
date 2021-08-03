@@ -17,7 +17,7 @@ local file = io.open(output, "w")
 file:write("local ProfessionNames = {\n")
 
 for _, locale in pairs(locales) do
-	local iter = parser.ReadCSV("skillline", {
+	local iter = parser:ReadCSV("skillline", {
 		header = true,
 		locale = locale,
 	})

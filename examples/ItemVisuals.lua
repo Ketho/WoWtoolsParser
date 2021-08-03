@@ -11,8 +11,8 @@ local function GetFirstID(t)
 end
 
 local function ItemVisuals(BUILD)
-	local fd = parser.ReadListfile()
-	local iter = parser.ReadCSV("itemvisuals", {build=BUILD, header=true})
+	local fd = parser:ReadListfile()
+	local iter = parser:ReadCSV("itemvisuals", {build=BUILD, header=true})
 	--local fsRaw = '\t[%d] = {%s},\n'
 	local fsName = '\t[%d] = "%s",\n'
 	local modelFileID = {}

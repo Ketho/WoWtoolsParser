@@ -3,7 +3,7 @@ local parser = require "wowtoolsparser"
 local output = "out/InterfaceIcons.lua"
 
 local function main()
-	local filedata = parser.ReadListfile()
+	local filedata = parser:ReadListfile()
 	local sorted = {}
 	for fdid, path in pairs(filedata) do
 		local _, _, icon = path:find("interface/icons/(.+)%.blp$")

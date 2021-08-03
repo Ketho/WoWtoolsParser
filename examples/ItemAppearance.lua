@@ -72,12 +72,12 @@ local handler = {
 }
 
 local function ParseDBC(dbc, BUILD)
-	local iter = parser.ReadCSV(dbc, {build=BUILD, header=true})
+	local iter = parser:ReadCSV(dbc, {build=BUILD, header=true})
 	return handler[dbc](iter)
 end
 
 local function ItemAppearance(BUILD)
-	fd = parser.ReadListfile()
+	fd = parser:ReadListfile()
 	for _, name in pairs(order) do
 		print("reading "..name)
         data[name] = ParseDBC(name, BUILD)

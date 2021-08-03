@@ -25,7 +25,7 @@ local function GlobalStrings(options)
 	options = options or {}
 	options.header = true
 	-- filter and sort globalstrings
-	local globalstrings, usedBuild = parser.ReadCSV("globalstrings", options)
+	local globalstrings, usedBuild = parser:ReadCSV("globalstrings", options)
 	local stringsTable = {}
 	for line in globalstrings:lines() do
 		local flags = tonumber(line.Flags)

@@ -18,7 +18,7 @@ local file = io.open(output, "w")
 file:write("local WeaponSkillNames = {\n")
 
 for _, locale in pairs(locales) do
-	local iter = parser.ReadCSV("skillline", {
+	local iter = parser:ReadCSV("skillline", {
 		header = true,
 		build = "1.13",
 		locale = locale,

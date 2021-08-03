@@ -4,7 +4,7 @@ local output = "out/ItemWotlk.lua"
 local function ItemWotlk(BUILD)
 	print("reading itemdisplayinfo")
 	local itemdisplayinfo = {}
-	local dbc_itemdisplayinfo = parser.ReadCSV("itemdisplayinfo", {build=BUILD, header=true})
+	local dbc_itemdisplayinfo = parser:ReadCSV("itemdisplayinfo", {build=BUILD, header=true})
 	for line in dbc_itemdisplayinfo:lines() do
 		local ID = tonumber(line.ID)
 		if ID then
@@ -15,7 +15,7 @@ local function ItemWotlk(BUILD)
 
 	print("reading itemsparse")
 	local itemsparse = {}
-	local dbc_itemsparse = parser.ReadCSV("itemsparse", {header=true})
+	local dbc_itemsparse = parser:ReadCSV("itemsparse", {header=true})
 	for line in dbc_itemsparse:lines() do
 		local ID = tonumber(line.ID)
 		if ID then
@@ -29,7 +29,7 @@ local function ItemWotlk(BUILD)
 	local file = io.open(output, "w")
 	file:write("local ItemWotlk = {\n")
 	file:write("\t-- ID = InventoryType, Icon, Name\n")
-	local dbc_item = parser.ReadCSV("item", {build=BUILD, header=true})
+	local dbc_item = parser:ReadCSV("item", {build=BUILD, header=true})
 	for line in dbc_item:lines() do
 		local ID = tonumber(line.ID)
 		if ID then

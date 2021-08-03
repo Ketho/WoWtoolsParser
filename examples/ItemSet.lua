@@ -99,7 +99,7 @@ local handler = {
 }
 
 local function ParseDBC(dbc, BUILD)
-	local iter = parser.ReadCSV(dbc, {build=BUILD, header=true})
+	local iter = parser:ReadCSV(dbc, {build=BUILD, header=true})
 	return handler[dbc](iter)
 end
 

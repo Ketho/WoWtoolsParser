@@ -28,7 +28,7 @@ local function main(BUILD)
 	print("writing "..output)
 	local file = io.open(output, "w")
 
-	local areatable_csv = parser.ReadCSV("areatable", {build=BUILD, header=true})
+	local areatable_csv = parser:ReadCSV("areatable", {build=BUILD, header=true})
 	-- general lookup table for areaids
 	local areatable_tbl = {}
 	for line in areatable_csv:lines() do
@@ -64,7 +64,7 @@ local function main(BUILD)
 	end
 	file:write("}\n\n")
 
-	local uimapassignment_csv = parser.ReadCSV("uimapassignment", {build=BUILD, header=true})
+	local uimapassignment_csv = parser:ReadCSV("uimapassignment", {build=BUILD, header=true})
 	local uimapassignment_tbl = {}
 	for line in uimapassignment_csv:lines() do
 		local AreaID = tonumber(line.AreaID)
