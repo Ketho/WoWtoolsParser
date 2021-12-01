@@ -64,7 +64,7 @@ local function GlobalStrings(options)
 end
 
 GlobalStrings()
--- GlobalStrings({build="9.0.5"})
--- GlobalStrings({build="1.13."})
--- GlobalStrings({build="2.5.1"})
+-- GlobalStrings({build="9.1.5"})
+-- GlobalStrings({build="1.14."})
+-- GlobalStrings({build="2.5.2"})
 -- GlobalStrings({locale="deDE"})

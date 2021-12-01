@@ -33,6 +33,6 @@ end
 ### Dependencies
 * luafilesystem: https://luarocks.org/modules/hisham/luafilesystem
 * csv: https://luarocks.org/modules/geoffleyland/csv
-* curl: https://curl.haxx.se/
-* lua-curl: https://luarocks.org/modules/moteus/lua-curl
+* luasocket: https://luarocks.org/modules/luasocket/luasocket
+* luasec: https://luarocks.org/modules/brunoos/luasec
 * lua-cjson: https://luarocks.org/modules/openresty/lua-cjson

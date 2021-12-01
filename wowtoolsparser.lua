@@ -1,9 +1,8 @@
 local lfs = require "lfs"
-local csv = require "csv"
-local cURL = require "cURL"
+local https = require "ssl.https"
+local csv = require("csv")
 local cjson = require "cjson"
 local cjsonutil = require "cjson.util"
-local parser = {}
 
 local listfile_url = "https://wow.tools/casc/listfile/download/csv/unverified"
 --local databases_url = "https://api.wow.tools/databases"
@@ -11,9 +10,8 @@ local versions_url = "https://api.wow.tools/databases/%s/versions"
 local csv_url = "https://wow.tools/api/export/?name=%s&build=%s&useHotfixes=true"
 local json_url = "https://wow.tools/api/data/%s/?build=%s&useHotfixes=true&length=%d" -- saves them a slice call
 
-local USER_AGENT = "your user agent here"
 local CACHE_PATH = "cache"
-local CACHE_INVALIDATION_TIME = 600
+local INVALIDATION_TIME = 60*60
 
 local listfile_cache = CACHE_PATH.."/listfile.csv"
 local versions_cache = CACHE_PATH.."/%s_versions.json"
@@ -23,6 +21,8 @@ local json_cache = CACHE_PATH.."/%s.json"
 if not lfs.attributes(CACHE_PATH) then
 	lfs.mkdir(CACHE_PATH)
 end
+
+local parser = {}
 
 local function GetBaseName(name, build, options)
 	local base = name
@@ -39,28 +39,18 @@ local function ShouldDownload(path)
 		return true
 	elseif path:find("versions%.json") or path:find("listfile%.csv") then
 		local modified = attr.modification
-		if os.time() > modified + CACHE_INVALIDATION_TIME then
+		if os.time() > modified + INVALIDATION_TIME then
 			return true
 		end
 	end
 end
 
---- Sends an HTTP GET request
--- @param url the URL of the request
--- @param file (optional) file to be written
--- @return string if file is given, the HTTP response
-local function HTTP_GET(url, file)
-	local data, idx = {}, 0
-	cURL.easy{
-		url = url,
-		writefunction = file or function(str)
-			idx = idx + 1
-			data[idx] = str
-		end,
-		ssl_verifypeer = false,
-		useragent = USER_AGENT,
-	}:perform():close()
-	return table.concat(data)
+-- https://github.com/brunoos/luasec/wiki/LuaSec-1.0.x#httpsrequesturl---body
+local function DownloadFile(url, path)
+	local data = https.request(url)
+	local file = io.open(path, "w")
+	file:write(data)
+	file:close()
 end
 
 --- Gets all build versions for a database
@@ -69,9 +59,7 @@ end
 function parser:GetVersions(name)
 	local path = versions_cache:format(name)
 	if ShouldDownload(path) then
-		local file = io.open(path, "w")
-		HTTP_GET(versions_url:format(name), file)
-		file:close()
+		DownloadFile(versions_url:format(name), path)
 	end
 	local json = cjsonutil.file_load(path)
 	local tbl = cjson.decode(json)
@@ -109,16 +97,14 @@ function parser:ReadCSV(name, options)
 	local base = GetBaseName(name, build, options)
 	local path = csv_cache:format(base)
 	if not lfs.attributes(path) then
-		local file = io.open(path, "w")
 		local url = csv_url:format(name, build)
 		if options.locale then
 			url = url.."&locale="..options.locale
 		end
-		HTTP_GET(url, file)
-		file:close()
+		DownloadFile(url, path)
 	end
 	print("reading "..path)
-	local iter = csv.open(path, {header = options.header})
+	local iter = csv.open(path, {header = options.header, buffer_size = 1024*4})
 	return iter, build
 end
 
@@ -134,15 +120,13 @@ function parser:ReadJSON(name, options)
 	local base = GetBaseName(name, build, options)
 	local path = json_cache:format(base)
 	if not lfs.attributes(path) then
-		local file = io.open(path, "w")
-		local initialRequest = HTTP_GET(json_url:format(name, build, 0))
+		local initialRequest = DownloadFile(json_url:format(name, build, 0))
 		local recordsTotal = cjson.decode(initialRequest).recordsTotal
 		local url = json_url:format(name, build, recordsTotal)
 		if options.locale then
 			url = url.."&locale="..options.locale
 		end
-		HTTP_GET(url, file)
-		file:close()
+		DownloadFile(url, path)
 	end
 	print("reading "..path)
 	local json = cjsonutil.file_load(path)
@@ -154,9 +138,7 @@ end
 function parser:ReadListfile()
 	if ShouldDownload(listfile_cache) then
 		print("downloading listfile...")
-		local file = io.open(listfile_cache, "w")
-		HTTP_GET(listfile_url, file)
-		file:close()
+		DownloadFile(listfile_url, listfile_cache)
 	end
 	local iter = csv.open(listfile_cache, {separator = ";"})
 	local filedata = {}
