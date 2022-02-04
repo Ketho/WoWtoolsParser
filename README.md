@@ -32,7 +32,8 @@ end
 
 ### Dependencies
 * luafilesystem: https://luarocks.org/modules/hisham/luafilesystem
-* csv: https://luarocks.org/modules/geoffleyland/csv
 * luasocket: https://luarocks.org/modules/luasocket/luasocket
 * luasec: https://luarocks.org/modules/brunoos/luasec
 * lua-cjson: https://luarocks.org/modules/openresty/lua-cjson
+* csv: https://luarocks.org/modules/geoffleyland/csv
+
